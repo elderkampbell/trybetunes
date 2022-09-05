@@ -23,7 +23,7 @@ export default class Login extends Component {
   };
 
   handleClick = async () => {
-    const { userName, loading, redirect } = this.state;
+    const { userName } = this.state;
     this.setState({ loading: true });
     await createUser({ name: userName });
     this.setState({ redirect: true });
@@ -33,9 +33,9 @@ export default class Login extends Component {
     const { userName, btnEnabler, loading, redirect } = this.state;
 
     return (
-      redirect ? <Redirect to="/search" />
-        : <div data-testid="page-login">
-          {!loading
+      <div data-testid="page-login">
+        {
+          !loading
             ? (
               <form>
                 <label htmlFor="login-name-input">
@@ -56,10 +56,10 @@ export default class Login extends Component {
                 >
                   Entrar
                 </button>
-              </form>
-            )
-            : <Loading />}
-        </div>
+              </form>) : <Loading />
+        }
+        { redirect && <Redirect to="/search" /> }
+      </div>
     );
   }
 }
