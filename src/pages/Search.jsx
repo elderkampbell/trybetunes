@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Header from '../Components/Header';
+import Loading from '../Components/Loading';
+import searchAlbumsAPIs from '../services/searchAlbumsAPI';
 import Loading from '../Components/Loading';
 import searchAlbumsAPIs from '../services/searchAlbumsAPI';
 
@@ -8,6 +11,9 @@ export default class Search extends Component {
   state = {
     artistName: '',
     btnEnabler: true,
+    loading: true,
+    artistInfo: [],
+    searched: false,
     loading: true,
     artistInfo: [],
     searched: false,
@@ -39,8 +45,23 @@ export default class Search extends Component {
   //   });
   // }
 
+  handleClick = async () => {
+    const { artistName } = this.state;
+    this.setState({ loading: false });
+    const api = await searchAlbumsAPIs(artistName);
+    this.setState({ artistInfo: api });
+    console.log(api);
+    // this.setState({ redirect: true });
+  };
+
+  // componentDidMount() {
+  //   getUser().then((userInfo) => {
+  //     this.setState({ name: userInfo.name, loading: false });
+  //   });
+  // }
+
   render() {
-    const { artistName, btnEnabler, artistInfo, loading, searched } = this.state;
+    const { artistName, btnEnabler, artistInfo, loading, searched, artistInfo, loading, searched } = this.state;
     return (
       <div data-testid="page-search">
         <Header />
@@ -59,14 +80,15 @@ export default class Search extends Component {
                   />
                 </label>
 
-                <button
-                  data-testid="search-artist-button"
-                  type="button"
-                  disabled={ btnEnabler }
+                      <button
+                        data-testid="search-artist-button"
+                        type="button"
+                        disabled={ btnEnabler }
                   onClick={ this.handleClick }
+                        onClick={ this.handleClick }
                 >
-                  Pesquisar
-                </button>
+                        Pesquisar
+                      </button>
 
               </form>) : <Loading />
 
