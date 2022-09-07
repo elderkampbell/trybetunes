@@ -7,7 +7,7 @@ export default class Login extends Component {
   state = {
     userName: '',
     btnEnabler: true,
-    loading: false,
+    loading: true,
     redirect: false,
   };
 
@@ -24,7 +24,7 @@ export default class Login extends Component {
 
   handleClick = async () => {
     const { userName } = this.state;
-    this.setState({ loading: true });
+    this.setState({ loading: false });
     await createUser({ name: userName });
     this.setState({ redirect: true });
   };
@@ -35,7 +35,7 @@ export default class Login extends Component {
     return (
       <div data-testid="page-login">
         {
-          !loading
+          loading
             ? (
               <form>
                 <label htmlFor="login-name-input">
