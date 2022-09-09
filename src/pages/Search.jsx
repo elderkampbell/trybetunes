@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Link } from 'react-router-dom';
 import Header from '../Components/Header';
-import Loading from '../Components/Loading';
-import searchAlbumsAPIs from '../services/searchAlbumsAPI';
 import Loading from '../Components/Loading';
 import searchAlbumsAPIs from '../services/searchAlbumsAPI';
 
@@ -14,9 +11,7 @@ export default class Search extends Component {
     loading: true,
     artistInfo: [],
     searched: false,
-    loading: true,
-    artistInfo: [],
-    searched: false,
+    searchedArtist: '',
   };
 
   btnValidation = () => {
@@ -31,37 +26,26 @@ export default class Search extends Component {
   };
 
   handleClick = async () => {
-    const { artistName } = this.state;
     this.setState({ loading: false });
-    const api = await searchAlbumsAPIs(artistName);
-    this.setState({ artistInfo: api });
-    console.log(api);
-    // this.setState({ redirect: true });
-  };
-
-  // componentDidMount() {
-  //   getUser().then((userInfo) => {
-  //     this.setState({ name: userInfo.name, loading: false });
-  //   });
-  // }
-
-  handleClick = async () => {
     const { artistName } = this.state;
-    this.setState({ loading: false });
     const api = await searchAlbumsAPIs(artistName);
-    this.setState({ artistInfo: api });
-    console.log(api);
-    // this.setState({ redirect: true });
+    this.setState((prevState) => ({
+      artistName: '',
+      btnEnabler: true,
+      loading: true,
+      searched: true,
+      searchedArtist: prevState.artistName,
+      artistInfo: api,
+    }));
   };
-
-  // componentDidMount() {
-  //   getUser().then((userInfo) => {
-  //     this.setState({ name: userInfo.name, loading: false });
-  //   });
-  // }
 
   render() {
-    const { artistName, btnEnabler, artistInfo, loading, searched, artistInfo, loading, searched } = this.state;
+    const { artistName,
+      btnEnabler,
+      artistInfo,
+      loading,
+      searched,
+      searchedArtist } = this.state;
     return (
       <div data-testid="page-search">
         <Header />
@@ -80,41 +64,47 @@ export default class Search extends Component {
                   />
                 </label>
 
-                      <button
-                        data-testid="search-artist-button"
-                        type="button"
-                        disabled={ btnEnabler }
+                <button
+                  data-testid="search-artist-button"
+                  type="button"
+                  disabled={ btnEnabler }
                   onClick={ this.handleClick }
-                        onClick={ this.handleClick }
                 >
-                        Pesquisar
-                      </button>
+                  Pesquisar
+                </button>
 
               </form>) : <Loading />
 
         }
         {
-
-          searched && artistInfo.length === 0 ? <p>Nenhum álbum foi encontrado</p>
-            : (
-              <div>
-                { artistInfo.map((album) => (
-                  <Link
-                    to={ `/album/${album.collectionId}` }
-                    key={ album.collectionId }
-                    data-testid={ `link-to-album-${collectionId}` }
-                  >
-                    <img src={ album.artworkUrl100 } alt={ album.collectionName } />
-                    <p>
-                      { album.artistName }
-                    </p>
-                    <p>
-                      {' '}
-                      { album.collectionName }
-                    </p>
-                  </Link>
-                )) }
-              </div>)
+          searched
+          && (
+            <>
+              <p>
+                {`Resultado de álbuns de: ${searchedArtist}`}
+              </p>
+              {
+                artistInfo.length !== 0 ? (
+                  <div>
+                    { artistInfo.map((album) => (
+                      <Link
+                        to={ `/album/${album.collectionId}` }
+                        key={ album.collectionId }
+                        data-testid={ `link-to-album-${album.collectionId}` }
+                      >
+                        <img src={ album.artworkUrl100 } alt={ album.collectionName } />
+                        <p>
+                          { album.artistName }
+                        </p>
+                        <p>
+                          {' '}
+                          { album.collectionName }
+                        </p>
+                      </Link>
+                    )) }
+                  </div>) : <p>Nenhum álbum foi encontrado</p>
+              }
+            </>)
         }
       </div>
     );
