@@ -38,6 +38,7 @@ export default class Album extends Component {
                 key={ music.trackId }
                 trackName={ music.trackName }
                 trackUrl={ music.previewUrl }
+                musics={ music }
               />
             ))
           }
